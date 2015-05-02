@@ -49,14 +49,14 @@ func getRequestBody(r *http.Request) string {
 		return ""
 	}
 
-	return fmt.Sprintf(" -d '%s'", string(data))
+	return fmt.Sprintf("-d '%s'", string(data))
 }
 
 func getHeaders(h http.Header) string {
 	ret := ""
 	for header, values := range h {
 		for _, value := range values {
-			ret += fmt.Sprintf(" --header '%s: %v'", header, value)
+			ret += fmt.Sprintf("--header '%s: %v'", header, value)
 		}
 	}
 	return ret

@@ -10,10 +10,9 @@ import (
 
 func TestSimpleCurl(t *testing.T) {
 	urlStr := "http://example.com"
-	data := []byte("some post data")
+	data := []byte(`{"key":"value"}`)
 	body := bytes.NewBuffer(data)
 	method := "POST"
-
 	req, err := http.NewRequest(method, urlStr, body)
 	if err != nil {
 		t.Fatal(err)
