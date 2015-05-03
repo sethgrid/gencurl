@@ -4,9 +4,25 @@ import (
 	"bytes"
 	"fmt"
 	"net/http"
+	"net/url"
 	"strings"
 	"testing"
 )
+
+func TestSimpleCurlFromResponse(t *testing.T) {
+	urlStr := "http://www.example.com"
+	data := url.Values{"key": {"value"}}
+	_, err := http.PostForm(urlStr, data)
+	if err != nil {
+		t.Fatal(err)
+	}
+	curl := FromResponse("POST", urlStr, data.Encode())
+	t.Log(curl)
+
+	if want := fmt.Sprintf("-X POST"); !strings.Contains(curl, want) {
+		t.Errorf("missing %s", want)
+	}
+}
 
 func TestSimpleCurl(t *testing.T) {
 	urlStr := "http://example.com"
@@ -48,18 +64,18 @@ func TestSimpleCurl(t *testing.T) {
 	t.Log("Generated Curl: " + curl)
 
 	if want := fmt.Sprintf("-X %s", method); !strings.Contains(curl, want) {
-		t.Errorf("missing " + want)
+		t.Errorf("missing ", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerContentType, contentType); !strings.Contains(curl, want) {
-		t.Errorf("missing " + want)
+		t.Errorf("missing ", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerXCustom, xCustom1); !strings.Contains(curl, want) {
-		t.Errorf("missing " + want)
+		t.Errorf("missing ", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerXCustom, xCustom2); !strings.Contains(curl, want) {
-		t.Errorf("missing " + want)
+		t.Errorf("missing ", want)
 	}
 	if want := fmt.Sprintf("-d '%s'", string(data)); !strings.Contains(curl, want) {
-		t.Errorf("missing " + want)
+		t.Errorf("missing ", want)
 	}
 }
