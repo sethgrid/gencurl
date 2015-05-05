@@ -3,16 +3,16 @@ gencurl generates a curl command based on an http.Request to be used for logging
 
 ```go
 // create an http request
-  data := []byte(`{"key":"value"}`)
-  req, err := http.NewRequest("POST", "http://www.example.com", bytes.NewBuffer(data))
-	if err != nil {
-		// handle err
-	}
-	req.Header.Add("X-Custom", "custom data")
+data := []byte(`{"key":"value"}`)
+req, err := http.NewRequest("POST", "http://www.example.com", bytes.NewBuffer(data))
+if err != nil {
+    // handle err
+}
+req.Header.Add("X-Custom", "custom data")
 
-	curl := gencurl.FromRequest(req)
+curl := gencurl.FromRequest(req)
 
-	// later, execute the request. On error, you can print curl to replicate and debug an issue
+// later, execute the request. On error, you can print curl to replicate and debug an issue
 ```
 
 The generated curl command for this example would be:
