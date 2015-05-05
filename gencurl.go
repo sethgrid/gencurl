@@ -23,14 +23,16 @@ func FromRequest(r *http.Request) string {
 	return ret
 }
 
-// FromResponse is less useful than FromRequest because the structure of the
-// request is in the http package. We do not have access to the url, method,
+// FromParams is less useful than FromRequest because the structure of the
+// request is likely in the http package call. Unlike a request value, we
+// cannot use a response value as we do not have access to the url, method,
 // or request body. If you used http.Post(), add a content-type header set to
 // the bodyType parameter. If you used http.PostForm(), your content-type is set
 // to "application/x-www-form-urlencoded".
-func FromResponse(method string, urlStr string, requestBody string) string {
-	ret := fmt.Sprintf("curl -v -X %s %s %s",
+func FromParams(method string, urlStr string, requestBody string, headers http.Header) string {
+	ret := fmt.Sprintf("curl -v -X %s %s %s %s",
 		method,
+		getHeaders(headers),
 		urlStr,
 		ifSet(requestBody, fmt.Sprintf("-d '%s'", requestBody)))
 
@@ -71,7 +73,7 @@ func getHeaders(h http.Header) string {
 	ret := ""
 	for header, values := range h {
 		for _, value := range values {
-			ret += fmt.Sprintf("--header '%s: %v'", header, value)
+			ret += fmt.Sprintf(" --header '%s: %v'", header, value)
 		}
 	}
 	return ret
