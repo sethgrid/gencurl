@@ -14,7 +14,7 @@ import (
 func FromRequest(r *http.Request) string {
 	ret := fmt.Sprintf("curl -v -X %s %s %s %s %s %s",
 		r.Method,
-		getHeaders(r.Header),
+		getHeaders(r.Header, r.Host),
 		ifSet(r.UserAgent(), fmt.Sprintf("--user-agent '%s'", r.UserAgent())),
 		ifSet(r.Referer(), fmt.Sprintf("--referrer '%s'", r.Referer())),
 		r.URL.String(),
@@ -69,12 +69,16 @@ func getRequestBody(r io.ReadCloser) string {
 	return fmt.Sprintf("-d '%s'", string(data))
 }
 
-func getHeaders(h http.Header) string {
+func getHeaders(h http.Header, Host string) string {
 	ret := ""
 	for header, values := range h {
 		for _, value := range values {
-			ret += fmt.Sprintf(" --header '%s: %v'", header, value)
+			if strings.ToLower(header) != "host"{
+				ret += fmt.Sprintf(" --header '%s: %v'", header, value)
+			}
 		}
 	}
+	// the request object does not allow overriding of the host header. one must say req.Host = "foo.bar"
+	ret += fmt.Sprintf(" --header '%s: %v'", "host", Host)
 	return ret
 }
