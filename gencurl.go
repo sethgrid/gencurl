@@ -5,7 +5,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"net"
 	"net/http"
+	"net/url"
 	"strings"
 )
 
@@ -33,11 +35,20 @@ func FromRequest(r *http.Request) string {
 func FromParams(method string, urlStr string, requestBody string, headers http.Header) string {
 	ret := fmt.Sprintf("curl -v -X %s %s %s %s",
 		method,
-		getHeaders(headers),
+		getHeaders(headers, extractHost(urlStr)),
 		urlStr,
 		ifSet(requestBody, fmt.Sprintf("-d '%s'", requestBody)))
 
 	return ret
+}
+
+func extractHost(urlStr string) string {
+	u, err := url.Parse(urlStr)
+	if err != nil {
+		return ""
+	}
+	host, _, _ := net.SplitHostPort(u.Host)
+	return host
 }
 
 func ifSet(condition string, passThrough string) string {
@@ -74,12 +85,15 @@ func getHeaders(h http.Header, Host string) string {
 	ret := ""
 	for header, values := range h {
 		for _, value := range values {
-			if strings.ToLower(header) != "host"{
+			if strings.ToLower(header) != "host" {
 				ret += fmt.Sprintf(" --header '%s: %v'", header, value)
 			}
 		}
 	}
 	// the request object does not allow overriding of the host header. one must say req.Host = "foo.bar"
-	ret += fmt.Sprintf(" --header '%s: %v'", "host", Host)
+	if Host != "" {
+		ret += fmt.Sprintf(" --header '%s: %v'", "host", Host)
+	}
+
 	return ret
 }
