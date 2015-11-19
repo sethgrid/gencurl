@@ -46,20 +46,20 @@ func TestFromRequest(t *testing.T) {
 		defer resp.Body.Close()
 	*/
 
-	if want := fmt.Sprintf("-X %s", method); !strings.Contains(curl, want) {
-		t.Errorf("missing ", want)
+	if want := fmt.Sprintf("-X %s", strings.ToUpper(method)); !strings.Contains(curl, want) {
+		t.Errorf("missing %s", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerContentType, contentType); !strings.Contains(curl, want) {
-		t.Errorf("missing ", want)
+		t.Errorf("missing %s", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerXCustom, xCustom1); !strings.Contains(curl, want) {
-		t.Errorf("missing ", want)
+		t.Errorf("missing %s", want)
 	}
 	if want := fmt.Sprintf("--header '%s: %s'", headerXCustom, xCustom2); !strings.Contains(curl, want) {
-		t.Errorf("missing ", want)
+		t.Errorf("missing %s", want)
 	}
 	if want := fmt.Sprintf("-d '%s'", string(data)); !strings.Contains(curl, want) {
-		t.Errorf("missing ", want)
+		t.Errorf("missing %s", want)
 	}
 }
 
