@@ -16,7 +16,7 @@ import (
 // you execute the request if you want to capture the post body.
 func FromRequest(r *http.Request) string {
 	ret := fmt.Sprintf("curl -v -X %s %s %s %s %s %s",
-		strings.ToUpper(r.Method),
+		r.Method,
 		getHeaders(r.Header, r.Host),
 		ifSet(r.UserAgent(), fmt.Sprintf("--user-agent '%s'", r.UserAgent())),
 		ifSet(r.Referer(), fmt.Sprintf("--referrer '%s'", r.Referer())),
@@ -34,7 +34,7 @@ func FromRequest(r *http.Request) string {
 // to "application/x-www-form-urlencoded".
 func FromParams(method string, urlStr string, requestBody string, headers http.Header) string {
 	ret := fmt.Sprintf("curl -v -X %s %s %s %s",
-		strings.ToUpper(method),
+		method,
 		getHeaders(headers, extractHost(urlStr)),
 		urlStr,
 		ifSet(requestBody, fmt.Sprintf("-d '%s'", requestBody)))
