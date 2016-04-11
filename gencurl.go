@@ -59,14 +59,14 @@ func ifSet(condition string, passThrough string) string {
 }
 
 func getRequestBody(r io.ReadCloser) string {
-	buf, err := ioutil.ReadAll(r)
+	b, err := ioutil.ReadAll(r)
 	if err != nil {
 		return ""
 	}
 
 	// copy and replace the reader
-	readerCopy := ioutil.NopCloser(bytes.NewBuffer(buf))
-	readerReplace := ioutil.NopCloser(bytes.NewBuffer(buf))
+	readerCopy := ioutil.NopCloser(bytes.NewReader(b))
+	readerReplace := ioutil.NopCloser(bytes.NewReader(b))
 	r = readerReplace
 
 	data, err := ioutil.ReadAll(readerCopy)
