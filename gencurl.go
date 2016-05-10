@@ -59,6 +59,9 @@ func ifSet(condition string, passThrough string) string {
 }
 
 func getRequestBody(r io.ReadCloser) string {
+	if r == nil {
+		return ""
+	}
 	b, err := ioutil.ReadAll(r)
 	if err != nil {
 		return ""
