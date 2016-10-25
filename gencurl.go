@@ -3,7 +3,6 @@ package gencurl
 import (
 	"bytes"
 	"fmt"
-	"io"
 	"io/ioutil"
 	"net"
 	"net/http"
@@ -21,7 +20,7 @@ func FromRequest(r *http.Request) string {
 		ifSet(r.UserAgent(), fmt.Sprintf("--user-agent '%s'", r.UserAgent())),
 		ifSet(r.Referer(), fmt.Sprintf("--referrer '%s'", r.Referer())),
 		r.URL.String(),
-		getRequestBody(r.Body))
+		getRequestBody(r))
 
 	return ret
 }
@@ -58,11 +57,11 @@ func ifSet(condition string, passThrough string) string {
 	return passThrough
 }
 
-func getRequestBody(r io.ReadCloser) string {
-	if r == nil {
+func getRequestBody(r *http.Request) string {
+	if r == nil || r.Body == nil {
 		return ""
 	}
-	b, err := ioutil.ReadAll(r)
+	b, err := ioutil.ReadAll(r.Body)
 	if err != nil {
 		return ""
 	}
@@ -70,7 +69,7 @@ func getRequestBody(r io.ReadCloser) string {
 	// copy and replace the reader
 	readerCopy := ioutil.NopCloser(bytes.NewReader(b))
 	readerReplace := ioutil.NopCloser(bytes.NewReader(b))
-	r = readerReplace
+	r.Body = readerReplace
 
 	data, err := ioutil.ReadAll(readerCopy)
 	if err != nil {

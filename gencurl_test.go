@@ -3,6 +3,7 @@ package gencurl
 import (
 	"bytes"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/url"
 	"strings"
@@ -60,6 +61,15 @@ func TestFromRequest(t *testing.T) {
 	}
 	if want := fmt.Sprintf("-d '%s'", string(data)); !strings.Contains(curl, want) {
 		t.Errorf("missing ", want)
+	}
+
+	// Check the body was not emptied
+	bytes, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		t.Errorf("expected no errors reading body, got %s", err)
+	}
+	if len(bytes) == 0 {
+		t.Errorf("expected body to not be drained.")
 	}
 }
 
