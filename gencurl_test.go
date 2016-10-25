@@ -115,7 +115,3 @@ func TestFromParamsWithHeaders(t *testing.T) {
 		t.Errorf("missing %s", want)
 	}
 }
-
-func TestRequestBody(t *testing.T) {
-
-}
